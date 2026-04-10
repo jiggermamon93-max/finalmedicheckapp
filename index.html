@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes">
+    <title>MediCheck – Complete SDG 3 Health App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+        }
+        body {
+            background: #eef5f2;
+            padding: 1rem 1rem 2rem;
+            color: #1e3a2f;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        /* header */
+        .app-header {
+            background: linear-gradient(135deg, #0f5b48, #1c7e64);
+            border-radius: 2rem;
+            padding: 1rem 1.5rem;
+            color: white;
+            margin-bottom: 1rem;
+            box-shadow: 0 6px 14px rgba(0,32,32,0.2);
+        }
+        .app-header h1 {
+            font-size: 1.6rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .sdg-badge {
+            background: #ffcd94;
+            color: #2c5e4a;
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            display: inline-block;
+            margin-top: 6px;
+        }
+        /* dashboard card */
+        .dashboard {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 1rem;
+            margin-bottom: 1.2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        .dashboard h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+        .stat-card {
+            background: #eef3f0;
+            flex: 1;
+            padding: 0.6rem;
+            border-radius: 1.2rem;
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #1c7e64;
+        }
+        .quick-nav {
+            display: flex;
+            gap: 0.6rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .nav-btn {
+            background: #2b7a62;
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 2rem;
+            font-size: 0.75rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .nav-btn:active { transform: scale(0.96); background: #1e5f4b; }
+        /* section cards */
+        .card {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 1.2rem;
+            margin-bottom: 1.2rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border: 1px solid #cfe3db;
+        }
+        .card-title {
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-left: 5px solid #2b7a62;
+            padding-left: 12px;
+        }
+        .input-group {
+            margin-bottom: 12px;
+        }
+        .input-group label {
+            font-weight: 600;
+            font-size: 0.8rem;
+            display: block;
+            margin-bottom: 4px;
+            color: #2d5a4c;
+        }
+        input, select {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 1.2rem;
+            border: 1px solid #cbdcd4;
+            background: #fefef7;
+            font-size: 1rem;
+        }
+        button {
+            background: #2b7a62;
+            border: none;
+            padding: 12px 16px;
+            border-radius: 2rem;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9rem;
+            width: 100%;
+            margin-top: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        button:active { transform: scale(0.97); background: #1e5f4b; }
+        .btn-outline {
+            background: transparent;
+            border: 1.5px solid #2b7a62;
+            color: #2b7a62;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+        .status-normal { background: #c8f0e1; color: #0f5b48; }
+        .status-high { background: #ffe0cc; color: #c23b22; }
+        .status-low { background: #fff3cf; color: #b16e0a; }
+        .history-item {
+            background: #fafefc;
+            padding: 12px;
+            border-radius: 1rem;
+            margin-bottom: 8px;
+            border-left: 4px solid #2b7a62;
+            font-size: 0.8rem;
+        }
+        .reminder-item {
+            background: #fef7e0;
+            padding: 10px;
+            border-radius: 1rem;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .delete-btn {
+            background: #d9534f;
+            padding: 6px 12px;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            width: auto;
+            margin: 0;
+        }
+        .flex-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .speak-btn {
+            background: #4c9f8a;
+            width: auto;
+            padding: 6px 12px;
+            font-size: 0.7rem;
+        }
+        .notification-perm {
+            background: #f0e6d2;
+            padding: 8px;
+            border-radius: 1rem;
+            text-align: center;
+            font-size: 0.7rem;
+            margin-top: 10px;
+        }
+        hr { margin: 15px 0; border-color: #d4e2db; }
+        @media (max-width: 480px) {
+            body { padding: 0.8rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="app-header">
+        <h1>❤️ MediCheck</h1>
+        <p>Self-monitor vitals · Medication alerts · SDG 3</p>
+        <div class="sdg-badge">🌱 Good Health & Well-Being (SDG 3.4)</div>
+    </div>
+
+    <!-- 🏠 DASHBOARD with summary + quick nav -->
+    <div class="dashboard">
+        <h3>📊 Dashboard Summary</h3>
+        <div class="stats" id="dashboardStats">
+            <div class="stat-card">📋 Total Logs<br><span id="totalLogsCount" class="stat-number">0</span></div>
+            <div class="stat-card">💊 Reminders<br><span id="reminderCount" class="stat-number">0</span></div>
+            <div class="stat-card">🩺 Last Status<br><span id="lastStatus" class="stat-number">—</span></div>
+        </div>
+        <div class="quick-nav">
+            <button class="nav-btn" data-section="tracker">📊 Tracker</button>
+            <button class="nav-btn" data-section="reminders">💊 Reminders</button>
+            <button class="nav-btn" data-section="history">📋 Health Log</button>
+            <button class="nav-btn" data-section="tips">🌿 Tips</button>
+        </div>
+    </div>
+
+    <!-- 📊 TRACKER - Vitals input form -->
+    <div id="tracker" class="card">
+        <div class="card-title">📊 Vitals Tracker</div>
+        <div class="input-group">
+            <label>BP (Systolic/Diastolic)</label>
+            <input type="text" id="bpInput" placeholder="e.g., 120/80" autocomplete="off">
+        </div>
+        <div class="input-group">
+            <label>Heart Rate (bpm)</label>
+            <input type="number" id="hrInput" placeholder="60-100">
+        </div>
+        <div class="input-group">
+            <label>Blood Sugar (mg/dL)</label>
+            <input type="number" id="sugarInput" placeholder="70-140">
+        </div>
+        <div class="input-group">
+            <label>Temperature (°C)</label>
+            <input type="text" id="tempInput" placeholder="36.5">
+        </div>
+        <div id="liveStatus" class="status-badge status-normal" style="margin: 8px 0;">⚖️ Status: Normal</div>
+        <button id="saveBtn">💾 Save Record</button>
+    </div>
+
+    <!-- 💊 REMINDERS - Add medication schedule -->
+    <div id="reminders" class="card">
+        <div class="card-title">💊 Medication Reminders</div>
+        <div class="input-group">
+            <label>Medicine Name</label>
+            <input type="text" id="medName" placeholder="e.g., Amlodipine">
+        </div>
+        <div class="input-group">
+            <label>Dosage</label>
+            <input type="text" id="dosage" placeholder="5mg">
+        </div>
+        <div class="input-group">
+            <label>Reminder Time (HH:MM)</label>
+            <input type="time" id="medTime">
+        </div>
+        <button id="setReminderBtn">⏰ Set Reminder</button>
+        <div id="reminderList" style="margin-top: 12px;"></div>
+        <div class="notification-perm" id="notifyPermMsg">🔔 Browser notifications: Click to enable</div>
+    </div>
+
+    <!-- 📋 HEALTH LOG - List of past entries -->
+    <div id="history" class="card">
+        <div class="card-title">📋 Health History Log</div>
+        <div id="historyList" style="max-height: 280px; overflow-y: auto;">
+            <div style="color: gray;">No records yet. Save vitals to see history.</div>
+        </div>
+        <button id="clearHistoryBtn" class="btn-outline" style="margin-top: 10px;">🗑️ Clear All Records</button>
+    </div>
+
+    <!-- 🌿 TIPS - Wellness + TTS -->
+    <div id="tips" class="card">
+        <div class="card-title">🌿 Wellness Tips (with Voice)</div>
+        <div id="tipText" style="background:#eef3f0; padding: 12px; border-radius: 1rem; margin-bottom: 10px;">Stay hydrated, monitor BP regularly, and never skip medication.</div>
+        <div class="flex-row">
+            <button id="newTipBtn" style="flex:1;">✨ New Tip</button>
+            <button id="speakTipBtn" class="speak-btn">🔊 Speak</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ---------- DATA STORAGE (localStorage) ----------
+    let healthRecords = [];
+    let reminders = [];
+
+    function loadData() {
+        const storedRecords = localStorage.getItem("mediCheck_records");
+        healthRecords = storedRecords ? JSON.parse(storedRecords) : [];
+        const storedReminders = localStorage.getItem("mediCheck_reminders");
+        reminders = storedReminders ? JSON.parse(storedReminders) : [];
+        renderHistory();
+        renderReminders();
+        updateDashboard();
+    }
+
+    function saveRecords() {
+        localStorage.setItem("mediCheck_records", JSON.stringify(healthRecords));
+        renderHistory();
+        updateDashboard();
+    }
+
+    function saveReminders() {
+        localStorage.setItem("mediCheck_reminders", JSON.stringify(reminders));
+        renderReminders();
+        scheduleAllReminders();
+        updateDashboard();
+    }
+
+    // Helper: status based on BP and HR
+    function evaluateStatus(bpStr, hr) {
+        let systolic = 120, diastolic = 80;
+        if(bpStr && bpStr.includes('/')) {
+            const parts = bpStr.split('/');
+            systolic = parseInt(parts[0]);
+            diastolic = parseInt(parts[1]);
+        }
+        hr = parseInt(hr);
+        if(isNaN(systolic) || isNaN(diastolic) || isNaN(hr)) return "normal";
+        if(systolic >= 140 || diastolic >= 90 || hr > 100) return "high";
+        if(hr < 60 && hr > 0) return "low";
+        return "normal";
+    }
+
+    function updateLiveStatus() {
+        const bp = document.getElementById("bpInput").value;
+        const hr = document.getElementById("hrInput").value;
+        const status = evaluateStatus(bp, hr);
+        const statusEl = document.getElementById("liveStatus");
+        if(status === "high") {
+            statusEl.innerText = "⚠️ Status: HIGH - Consult doctor";
+            statusEl.className = "status-badge status-high";
+        } else if(status === "low") {
+            statusEl.innerText = "💙 Status: LOW heart rate";
+            statusEl.className = "status-badge status-low";
+        } else {
+            statusEl.innerText = "✅ Status: Normal";
+            statusEl.className = "status-badge status-normal";
+        }
+    }
+
+    function saveVitalRecord() {
+        const bp = document.getElementById("bpInput").value.trim();
+        const hr = document.getElementById("hrInput").value.trim();
+        const sugar = document.getElementById("sugarInput").value.trim();
+        const temp = document.getElementById("tempInput").value.trim();
+        if(!bp || !hr || !sugar || !temp) {
+            alert("Please fill all vital fields.");
+            return;
+        }
+        const status = evaluateStatus(bp, hr);
+        const now = new Date();
+        const dateStr = now.toLocaleString();
+        const record = {
+            id: Date.now(),
+            date: dateStr,
+            bp: bp,
+            hr: hr,
+            sugar: sugar,
+            temp: temp,
+            status: status
+        };
+        healthRecords.unshift(record);
+        saveRecords();
+        // clear inputs
+        document.getElementById("bpInput").value = "";
+        document.getElementById("hrInput").value = "";
+        document.getElementById("sugarInput").value = "";
+        document.getElementById("tempInput").value = "";
+        updateLiveStatus();
+        alert("✅ Health record saved!");
+    }
+
+    function renderHistory() {
+        const container = document.getElementById("historyList");
+        if(!healthRecords.length) {
+            container.innerHTML = "<div style='color: gray;'>📭 No records yet. Save vitals above.</div>";
+            return;
+        }
+        container.innerHTML = healthRecords.map(rec => `
+            <div class="history-item">
+                <strong>${rec.date}</strong><br>
+                ❤️ BP: ${rec.bp} &nbsp;| 💓 HR: ${rec.hr} &nbsp;| 🩸 Sugar: ${rec.sugar} &nbsp;| 🌡️ Temp: ${rec.temp}<br>
+                <span class="status-badge ${rec.status === 'high' ? 'status-high' : (rec.status === 'low' ? 'status-low' : 'status-normal')}">
+                    ${rec.status === 'high' ? '⚠️ High' : (rec.status === 'low' ? '💙 Low' : '✅ Normal')}
+                </span>
+            </div>
+        `).join('');
+    }
+
+    function clearAllRecords() {
+        if(confirm("⚠️ Delete all health history? This cannot be undone.")) {
+            healthRecords = [];
+            saveRecords();
+        }
+    }
+
+    // ---------- REMINDERS with Notifications ----------
+    let notificationInterval = null;
+
+    function requestNotificationPermission() {
+        if ("Notification" in window) {
+            Notification.requestPermission().then(perm => {
+                document.getElementById("notifyPermMsg").innerHTML = perm === "granted" ? "🔔 Notifications enabled ✅" : "🔕 Notifications blocked. Enable in browser settings.";
+            });
+        } else {
+            document.getElementById("notifyPermMsg").innerHTML = "⚠️ Browser doesn't support notifications.";
+        }
+    }
+
+    function sendNotification(medName, dosage) {
+        if (!("Notification" in window)) return;
+        if (Notification.permission === "granted") {
+            new Notification("💊 MediCheck Reminder", {
+                body: `Time to take ${medName} (${dosage})`,
+                icon: "https://cdn-icons-png.flaticon.com/512/3096/3096574.png"
+            });
+        } else if (Notification.permission !== "denied") {
+            Notification.requestPermission();
+        }
+    }
+
+    function scheduleAllReminders() {
+        if(notificationInterval) clearInterval(notificationInterval);
+        notificationInterval = setInterval(() => {
+            const now = new Date();
+            const currentTime = `${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
+            reminders.forEach(rem => {
+                if(rem.time === currentTime) {
+                    sendNotification(rem.name, rem.dosage);
+                    const alertDiv = document.createElement('div');
+                    alertDiv.style.position = 'fixed'; alertDiv.style.bottom = '10px'; alertDiv.style.left = '10px';
+                    alertDiv.style.right = '10px'; alertDiv.style.background = '#ff9800'; alertDiv.style.color = 'white';
+                    alertDiv.style.padding = '12px'; alertDiv.style.borderRadius = '20px'; alertDiv.style.zIndex = '999';
+                    alertDiv.innerText = `🔔 Reminder: ${rem.name} (${rem.dosage})`;
+                    document.body.appendChild(alertDiv);
+                    setTimeout(() => alertDiv.remove(), 4000);
+                }
+            });
+        }, 60000);
+    }
+
+    function addReminder() {
+        const name = document.getElementById("medName").value.trim();
+        const dosage = document.getElementById("dosage").value.trim();
+        const time = document.getElementById("medTime").value;
+        if(!name || !dosage || !time) {
+            alert("Please fill medicine name, dosage and time.");
+            return;
+        }
+        const newRem = { id: Date.now(), name: name, dosage: dosage, time: time };
+        reminders.push(newRem);
+        saveReminders();
+        document.getElementById("medName").value = "";
+        document.getElementById("dosage").value = "";
+        document.getElementById("medTime").value = "";
+        alert("Reminder set!");
+    }
+
+    function deleteReminder(id) {
+        reminders = reminders.filter(r => r.id !== id);
+        saveReminders();
+    }
+
+    function renderReminders() {
+        const container = document.getElementById("reminderList");
+        if(!reminders.length) {
+            container.innerHTML = "<div style='font-size:0.8rem; color:#6c8b7c;'>No active reminders. Add above.</div>";
+            return;
+        }
+        container.innerHTML = reminders.map(rem => `
+            <div class="reminder-item">
+                <div><strong>💊 ${rem.name}</strong> ${rem.dosage} <br>⏰ ${rem.time}</div>
+                <button class="delete-btn" data-id="${rem.id}">🗑️</button>
+            </div>
+        `).join('');
+        document.querySelectorAll('.delete-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const id = parseInt(btn.getAttribute('data-id'));
+                deleteReminder(id);
+            });
+        });
+    }
+
+    // Dashboard summary update
+    function updateDashboard() {
+        document.getElementById("totalLogsCount").innerText = healthRecords.length;
+        document.getElementById("reminderCount").innerText = reminders.length;
+        if(healthRecords.length > 0) {
+            const last = healthRecords[0];
+            let statusText = last.status === 'high' ? '⚠️ High' : (last.status === 'low' ? '💙 Low' : '✅ Normal');
+            document.getElementById("lastStatus").innerHTML = statusText;
+        } else {
+            document.getElementById("lastStatus").innerHTML = '—';
+        }
+    }
+
+    // ---------- TIPS + TTS ----------
+    const tips = [
+        "Monitor your blood pressure daily at the same time.",
+        "Take medications exactly as prescribed by your doctor.",
+        "Drink at least 8 glasses of water per day.",
+        "Regular walking reduces hypertension risk.",
+        "Limit salt intake to under 5g per day.",
+        "Check blood sugar levels before meals.",
+        "Sleep 7-8 hours helps heart health.",
+        "Avoid smoking and limit alcohol for healthy BP.",
+        "Stress management lowers heart rate.",
+        "Eat more fruits and vegetables for diabetes control."
+    ];
+    let currentTip = tips[0];
+
+    function showRandomTip() {
+        const randomIndex = Math.floor(Math.random() * tips.length);
+        currentTip = tips[randomIndex];
+        document.getElementById("tipText").innerText = currentTip;
+    }
+
+    function speakCurrentTip() {
+        if('speechSynthesis' in window) {
+            const utterance = new SpeechSynthesisUtterance(currentTip);
+            utterance.lang = 'en-PH';
+            utterance.rate = 0.9;
+            window.speechSynthesis.cancel();
+            window.speechSynthesis.speak(utterance);
+        } else {
+            alert("Text-to-Speech not supported on this browser.");
+        }
+    }
+
+    // Smooth scroll to section
+    function scrollToSection(sectionId) {
+        const element = document.getElementById(sectionId);
+        if(element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }
+
+    // Event listeners
+    document.getElementById("saveBtn").addEventListener("click", saveVitalRecord);
+    document.getElementById("clearHistoryBtn").addEventListener("click", clearAllRecords);
+    document.getElementById("setReminderBtn").addEventListener("click", addReminder);
+    document.getElementById("newTipBtn").addEventListener("click", showRandomTip);
+    document.getElementById("speakTipBtn").addEventListener("click", speakCurrentTip);
+    document.getElementById("notifyPermMsg").addEventListener("click", requestNotificationPermission);
+    document.getElementById("bpInput").addEventListener("input", updateLiveStatus);
+    document.getElementById("hrInput").addEventListener("input", updateLiveStatus);
+
+    // Quick nav buttons
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const section = btn.getAttribute('data-section');
+            scrollToSection(section);
+        });
+    });
+
+    // Initial load
+    loadData();
+    updateLiveStatus();
+    showRandomTip();
+    requestNotificationPermission();
+    scheduleAllReminders();
+</script>
+</body>
+</html>
